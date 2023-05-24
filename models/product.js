@@ -25,6 +25,7 @@ module.exports = class Product{
 
     save(){
         getFileProducts(products=>{
+            this.id = products.length * 10
             products.push(this)
             fs.writeFile(p, JSON.stringify(products), err=>{
                 console.log(err)
@@ -34,5 +35,12 @@ module.exports = class Product{
 
     static fetchAll(cb){
         getFileProducts(cb)
+    }
+
+    static findById(pid, cb){
+        getFileProducts(products=>{
+            const product = products.find(p=>p.id == pid)
+            cb(product)
+        })
     }
 }

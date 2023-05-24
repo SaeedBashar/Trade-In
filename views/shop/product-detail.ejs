@@ -4,5 +4,22 @@
 
   <%- include('../includes/aside.ejs') %>
   
+  <main id="main" class="main">
+    <div class="row">
+      <div class="col-md-4 offset-md-4 col-sm-6 offset-sm-3">
+        <div class="card">
+          <div class="card-body pt-4 d-flex flex-column align-items-center">
+
+            <img src="<%= product.imageUrl %>" alt="Product Image" class="products-img rounded-circle">
+            <h2><%= product.title %></h2>
+            <h4>$ <%= product.price %></h4>
+            <small><%= product.description %></small>
+            <%- include('../includes/add-to-cart.ejs', {pid: product.id }) %>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
 
   <%- include('../includes/foot.ejs') %>
