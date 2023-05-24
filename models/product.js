@@ -15,7 +15,8 @@ const getFileProducts = (cb)=>{
 }
 
 module.exports = class Product{
-    constructor(title, category, imageUrl, description, price){
+    constructor(id, title, category, imageUrl, description, price){
+        this.id = id;
         this.title = title;
         this.category = category;
         this.imageUrl = imageUrl;
@@ -25,9 +26,28 @@ module.exports = class Product{
 
     save(){
         getFileProducts(products=>{
-            this.id = products.length * 10
-            products.push(this)
-            fs.writeFile(p, JSON.stringify(products), err=>{
+            if(this.id){
+                console.log(this)
+                const pIndex = products.findIndex(p=>p.id === this.id);
+                const updatedProducts = [...products];
+                updatedProducts[pIndex] = this;
+                fs.writeFile(p, JSON.stringify(updatedProducts), err=>{
+                    console.log(err)
+                })
+            }else{
+                this.id = (products.length * 10 + Date.now()).toString()
+                products.push(this)
+                fs.writeFile(p, JSON.stringify(products), err=>{
+                    console.log(err)
+                })
+            }
+        })
+    }
+    
+    static deleteById(pid){
+        getFileProducts(products=>{
+            const updatedProducts = products.filter(p=>p.id !== pid);
+            fs.writeFile(p, JSON.stringify(updatedProducts), err=>{
                 console.log(err)
             })
         })
@@ -39,7 +59,7 @@ module.exports = class Product{
 
     static findById(pid, cb){
         getFileProducts(products=>{
-            const product = products.find(p=>p.id == pid)
+            const product = products.find(p=>p.id === pid)
             cb(product)
         })
     }

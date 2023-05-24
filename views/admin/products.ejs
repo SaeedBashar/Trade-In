@@ -33,8 +33,11 @@
                       <span class="text-muted small pt-2 ps-1"> <%= p.description %></span>
                     </div>
                     <div class="">
-                      <button class="btn btn-outline-secondary">Edit</button>
-                      <button class="btn btn-outline-danger">Delete</button>
+                      <a href="/admin/edit-product/<%= p.id %>?edit=true" class="btn btn-outline-secondary">Edit</a>
+                      <form class="d-inline" action="/admin/delete-product" method="POST">
+                        <input type="hidden" name="productId" value="<%= p.id %>">
+                        <button class="btn btn-outline-danger">Delete</button>
+                      </form>
                     </div>
                   </div>
                 </div>

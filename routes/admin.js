@@ -1,7 +1,10 @@
 const express = require('express');
 
 const router = express.Router();
-const { getAddProduct, postAddProduct, getProducts } = require('../controllers/admin')
+const { 
+    getAddProduct, postAddProduct, 
+    getProducts, getEditProduct,
+    postEditProduct, postDeleteProduct } = require('../controllers/admin')
 
 router.get('/add-product', getAddProduct)
 
@@ -9,8 +12,10 @@ router.get('/products', getProducts)
 
 router.post('/add-product', postAddProduct)
 
-router.post('/edit-product')
+router.get('/edit-product/:id', getEditProduct)
 
-router.post('/delete-product')
+router.post('/edit-product', postEditProduct)
+
+router.post('/delete-product', postDeleteProduct)
 
 module.exports = router
