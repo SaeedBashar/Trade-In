@@ -4,5 +4,68 @@
 
   <%- include('../includes/aside.ejs') %>
   
+  <main id="main" class="main">
+    <div class="pagetitle">
+      <h1><%= pageTitle %></h1>
+      <nav>
+        <ol class="breadcrumb">
+          <li class="breadcrumb-item"><a href="#">Home</a></li>
+          <li class="breadcrumb-item active"><%= pageTitle %></li>
+        </ol>
+      </nav>
+    </div>
+    <section>
+      <div class="row">
+        <div class="col-lg-6">
+          <div class="card">
+            <div class="card-body">
+              <h5 class="card-title">User Orders</h5>
+    
+              <div class="accordion accordion-flush">
+                <% for(let order of orders) { %>
+                  <div class="accordion-item">
+                    <h2 class="accordion-header">
+                      <button class="accordion-button collapsed" data-bs-target="#id-<%= order.id %>" type="button" data-bs-toggle="collapse">
+                        Order Id - #<%= order.id %>
+                      </button>
+                    </h2>
+                    <div id="id-<%= order.id %>" class="accordion-collapse collapse" data-bs-parent="#faq-group-2">
+                      <div class="accordion-body">
+                          <table class="table table-borderless datatable">
+                            <thead>
+                              <tr>
+                                <th scope="col">Product Id</th>
+                                <th scope="col">Title</th>
+                                <th scope="col">Quantity</th>
+                                <th scope="col">Cost</th>
+                              </tr>
+                            </thead>
+                            <tbody>
+                              <% for(let prod of order.products) { %>
+                                <tr>
+                                  <th scope="row"><a href="#"><%= prod.product.id %></a></th>
+                                  <td><%= prod.product.title %></td>
+                                  <td><a href="#" class="text-primary"><%= prod.qty %></a></td>
+                                  <td>$ <%= prod.product.price * prod.qty %></td>
+                                </tr>
+                              <% } %>
+                              <tr>
+                                <th class="text-center fw-bold" colspan="3">Total Cost</th class="text-center fw-bold">
+                                <td> $ <%= order.totalPrice %></td>
+                              </tr>
+                            </tbody>
+                          </table>
+                      </div>
+                    </div>
+                  </div>
+                <% } %>
+              </div>
+    
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
 
   <%- include('../includes/foot.ejs') %>

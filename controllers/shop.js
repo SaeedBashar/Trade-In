@@ -72,8 +72,25 @@ exports.postDeleteCartItem = (req, res, next)=>{
 }
 
 exports.getOrders = (req, res, next)=>{
-    res.render('shop/orders', {
-        pageTitle: 'Page | Orders'
+    Order.getOrders(orders=>{
+        let userOrders = orders.filter(o=>o.userId === req.user.id)
+        Product.fetchAll(products=>{
+            let orderProducts;
+            for(let order of userOrders){
+                orderProducts = [...order.products];
+                order.products = orderProducts.map(p=>{
+                    for(prod of products){
+                        if(prod.id == p.id){
+                            return {product : prod, qty: p.qty}
+                        }
+                    }
+                })
+            }
+            res.render('shop/orders', {
+                pageTitle: 'Page | Orders',
+                orders: userOrders
+            })
+        })
     })
 }
 
@@ -82,9 +99,7 @@ exports.postOrders = (req, res, next)=>{
         let id = Date.now() + parseInt(Math.random() * 100)
         let order = new Order(id, cart.userId, cart.products, cart.totalPrice)
         order.saveOrder(()=>{
-            res.render('shop/orders', {
-                pageTitle: 'Page | Orders'
-            })
+            res.redirect('/order')
         })
         Cart.deleteCart()
     })

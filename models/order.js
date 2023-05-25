@@ -34,7 +34,7 @@ module.exports = class Order {
     }
 
     static getOrders(cb){
-        getFileCart(orders=>{
+        getFileOrder(orders=>{
             cb(orders)
         })
     }
