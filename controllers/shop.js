@@ -1,6 +1,7 @@
 
 const Product = require('../models/product');
 const Cart = require('../models/cart');
+const Order = require('../models/order');
 
 exports.getProducts = (req, res, next)=>{
     Product.fetchAll(products=>{
@@ -45,7 +46,8 @@ exports.getCart = (req, res, next)=>{
             }
             res.render('shop/cart', {
                 pageTitle: 'Page | Cart',
-                products: cartProducts
+                products: cartProducts,
+                totalPrice : cart.totalPrice.toFixed(2)
             })
         })
     })
@@ -55,7 +57,7 @@ exports.getCart = (req, res, next)=>{
 exports.postCart = (req, res, next)=>{
     const pid = req.body.productId;
     Product.findById(pid, ({price})=>{
-        Cart.addProduct(pid, price)
+        Cart.addProduct(pid, price, req.user.id)
     })
     res.redirect('/cart')
 }
@@ -66,6 +68,25 @@ exports.postDeleteCartItem = (req, res, next)=>{
     Product.findById(pid, ({price})=>{
         Cart.deleteProduct(pid, price)
         res.redirect('/cart')
+    })
+}
+
+exports.getOrders = (req, res, next)=>{
+    res.render('shop/orders', {
+        pageTitle: 'Page | Orders'
+    })
+}
+
+exports.postOrders = (req, res, next)=>{
+    Cart.getCart(cart=>{
+        let id = Date.now() + parseInt(Math.random() * 100)
+        let order = new Order(id, cart.userId, cart.products, cart.totalPrice)
+        order.saveOrder(()=>{
+            res.render('shop/orders', {
+                pageTitle: 'Page | Orders'
+            })
+        })
+        Cart.deleteCart()
     })
 }
 

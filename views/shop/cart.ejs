@@ -37,6 +37,20 @@
                           </form>
                         </td>
                       </tr>
+                      <tr>
+                        <th colspan="3" class="fw-bold text-center">Total Price</th>
+                        <td><%= totalPrice %></td>
+                        <td></td>
+                      </tr>
+                      <tr>
+                        <td></td>
+                        <td colspan="3" class="text-center">
+                          <form class="d-inline" action="/order" method="POST">
+                            <button class="btn btn-outline-primary">Order Now!</button>
+                          </form>
+                        </td>
+                        <td></td>
+                      </tr>
                     <% } ) %>
                   <% } else { %>
                     <tr>
