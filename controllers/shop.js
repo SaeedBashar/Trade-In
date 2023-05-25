@@ -3,35 +3,61 @@ const Product = require('../models/product');
 const Cart = require('../models/cart');
 const Order = require('../models/order');
 
-exports.getProducts = (req, res, next)=>{
-    Product.fetchAll(products=>{
-        let userProducts = products.filter(p=>p.userId === req.user.id)
-        res.render('shop/product-list', {
-            products: userProducts,
+exports.getProducts = async (req, res, next)=>{
+    try{
+        const products = await Product.find()
+        // let userProducts = products.filter(p=>p.userId === req.user.id)
+        res.render('shop/index', {
+            products: products,
             pageTitle: 'Page | Shop'
         })
-    })
+    }catch(err){
+        console.log(err)
+    }
+    // Product.fetchAll(products=>{
+    //     let userProducts = products.filter(p=>p.userId === req.user.id)
+    //     res.render('shop/product-list', {
+    //         products: userProducts,
+    //         pageTitle: 'Page | Shop'
+    //     })
+    // })
 }
 
-exports.getProduct = (req, res, next)=>{
+exports.getProduct = async(req, res, next)=>{
     const prodId = req.params.id;
-    Product.findById(prodId, product=>{
-        console.log(product)
-        res.render('shop/product-detail', {
-            product: product,
-            pageTitle: 'Page | Product Detail'
-        })
+    const product = await Product.findById(prodId)
+    console.log(product)
+    res.render('shop/product-detail', {
+        product: product,
+        pageTitle: 'Page | Product Detail'
     })
+    // Product.findById(prodId, product=>{
+    //     console.log(product)
+    //     res.render('shop/product-detail', {
+    //         product: product,
+    //         pageTitle: 'Page | Product Detail'
+    //     })
+    // })
 }
 
-exports.getIndex = (req, res, next)=>{
-    Product.fetchAll(products=>{
-        let userProducts = products.filter(p=>p.userId === req.user.id)
-        res.render('shop/index.ejs', {
-            products: userProducts,
+exports.getIndex = async (req, res, next)=>{
+    try{
+        const products = await Product.find()
+        // let userProducts = products.filter(p=>p.userId === req.user.id)
+        res.render('shop/index', {
+            products: products,
             pageTitle: 'Page | Shop'
         })
-    })
+    }catch(err){
+        console.log(err)
+    }
+    // Product.fetchAll(products=>{
+    //     let userProducts = products.filter(p=>p.userId === req.user.id)
+    //     res.render('shop/index.ejs', {
+    //         products: userProducts,
+    //         pageTitle: 'Page | Shop'
+    //     })
+    // })
 }
 
 exports.getCart = (req, res, next)=>{

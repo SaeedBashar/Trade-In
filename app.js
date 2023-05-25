@@ -34,4 +34,11 @@ app.use('/admin', adminRoutes)
 app.use(shopRoutes)
 app.use(errorRoute)
 
-app.listen(4000)
+mongoose.connect('mongodb://127.0.0.1:27017/tradeIn')
+.then(response=>{
+    console.log("[CONNECTED] Connection Setup Successfully.")
+    app.listen(4000)
+})
+.catch(err=>{
+    console.log(err)
+})
