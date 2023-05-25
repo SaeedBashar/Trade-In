@@ -15,13 +15,14 @@ const getFileProducts = (cb)=>{
 }
 
 module.exports = class Product{
-    constructor(id, title, category, imageUrl, description, price){
+    constructor(id, title, category, imageUrl, description, price, userId){
         this.id = id;
         this.title = title;
         this.category = category;
         this.imageUrl = imageUrl;
         this.description = description;
-        this.price = price
+        this.price = price;
+        this.userId = userId;
     }
 
     save(){

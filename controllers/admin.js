@@ -15,8 +15,9 @@ exports.postAddProduct = (req, res,next)=>{
     let price = req.body.price
     let category = req.body.category
     let imageUrl = req.body.imageUrl
+    let userId = req.user.id
 
-    const product = new Product(null, title, category, imageUrl, description, price)
+    const product = new Product(null, title, category, imageUrl, description, price, userId)
     product.save()
     res.redirect('/')
 }
@@ -41,15 +42,16 @@ exports.postEditProduct = (req, res, next)=>{
     let price = req.body.price
     let category = req.body.category
     let imageUrl = req.body.imageUrl
-    const product = new Product(pid, title, category, imageUrl, description, price)
+    const product = new Product(pid, title, category, imageUrl, description, price, req.user.id)
     product.save()
     res.redirect('/')
 }
 
 exports.getProducts = (req, res, next)=>{
     Product.fetchAll(products=>{
+        let userProducts = products.filter(p=>p.userId === req.user.id)
         res.render('admin/products', {
-            products: products,
+            products: userProducts,
             pageTitle: 'Page | Admin Products'
         })
     })

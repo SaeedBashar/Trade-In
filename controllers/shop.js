@@ -4,8 +4,9 @@ const Cart = require('../models/cart');
 
 exports.getProducts = (req, res, next)=>{
     Product.fetchAll(products=>{
+        let userProducts = products.filter(p=>p.userId === req.user.id)
         res.render('shop/product-list', {
-            products: products,
+            products: userProducts,
             pageTitle: 'Page | Shop'
         })
     })
@@ -13,7 +14,6 @@ exports.getProducts = (req, res, next)=>{
 
 exports.getProduct = (req, res, next)=>{
     const prodId = req.params.id;
-    console.log(prodId)
     Product.findById(prodId, product=>{
         console.log(product)
         res.render('shop/product-detail', {
@@ -25,8 +25,9 @@ exports.getProduct = (req, res, next)=>{
 
 exports.getIndex = (req, res, next)=>{
     Product.fetchAll(products=>{
+        let userProducts = products.filter(p=>p.userId === req.user.id)
         res.render('shop/index.ejs', {
-            products: products,
+            products: userProducts,
             pageTitle: 'Page | Shop'
         })
     })
