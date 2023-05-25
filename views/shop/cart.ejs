@@ -26,13 +26,13 @@
                   <% if(products.length > 0) {%>
                     <% products.forEach(prod=>{ %>
                       <tr>
-                        <th scope="row"><a href="#"><img class="cart-img" src="<%= prod.product.imageUrl %>" alt=""></a></th>
-                        <td><a href="#" class="text-primary fw-bold"><%= prod.product.title %></a></td>
+                        <th scope="row"><a href="#"><img class="cart-img" src="<%= prod.productId.imageUrl %>" alt=""></a></th>
+                        <td><a href="#" class="text-primary fw-bold"><%= prod.productId.title %></a></td>
                         <td><%= prod.qty %></td>
-                        <td class="fw-bold">$ <%= prod.product.price * prod.qty %></td>
+                        <td class="fw-bold">$ <%= (prod.productId.price * prod.qty).toFixed(2) %></td>
                         <td>
                           <form class="d-inline" action="/delete-cart-item" method="POST">
-                            <input type="hidden" name="productId" value="<%=prod.product.id%>">
+                            <input type="hidden" name="productId" value="<%=prod.productId._id%>">
                             <button class="btn btn-danger btn-sm" title="Delete Cart Item"><i class="bi bi-trash"></i></button>
                           </form>
                         </td>

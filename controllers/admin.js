@@ -9,27 +9,30 @@ exports.getAddProduct = (req, res, next)=>{
     })
 }
 
-exports.postAddProduct = (req, res,next)=>{
-    let title = req.body.title
-    let description = req.body.description
-    let price = req.body.price
-    let category = req.body.category
-    let imageUrl = req.body.imageUrl
-    // let userId = req.user.id
-    const product = new Product({
-        title,
-        description,
-        price,
-        category,
-        imageUrl
-    })
-    product.save()
-    .then(resp=>{
+exports.postAddProduct = async (req, res,next)=>{
+    try{
+        let title = req.body.title
+        let description = req.body.description
+        let price = req.body.price
+        let category = req.body.category
+        let imageUrl = req.body.imageUrl
+        let userId = req.user
+        const product = new Product({
+            title,
+            description,
+            price,
+            category,
+            imageUrl,
+            userId
+        })
+        const resp = await product.save()
         console.log(resp)
-    })
-    .catch(err=>{
+    }catch(err){
         console.log(err)
-    })
+
+    }
+    res.redirect('/admin/products')
+
     // const product = new Product(null, title, category, imageUrl, description, price, userId)
     // product.save()
     // res.redirect('/')
@@ -84,7 +87,7 @@ exports.postEditProduct = async (req, res, next)=>{
 
 exports.getProducts = async (req, res, next)=>{
     try{
-        const products = await Product.find()
+        const products = await Product.find().populate("userId")
         console.log(products)
         // let userProducts = products.filter(p=>p.userId === req.user.id)
         res.render('admin/products', {

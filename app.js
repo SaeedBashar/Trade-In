@@ -16,18 +16,24 @@ app.use(express.urlencoded({extended: false}))
 
 app.use(express.static(path.join(rootDir, 'public')))
 
-app.use((req, res, next)=>{
-    User.fetchUsers(users=>{
-        let user;
-        if(users.length == 0 ){
-            user = new User(null, "John Smith", "smith@gmail.com")
-            user.save()
-        }else{
-            user = new User(users[0].id, users[0].name, users[0].email)
-        }
-        req.user = user
-        next()
-    })
+app.use(async(req, res, next)=>{
+    const users = await User.find()
+    let user;
+    if(users.length == 0 ){
+        user = await new User({
+            name: "John Smith",
+            email: "smith@gmail.com",
+            cart: {
+                products: []
+            }
+        })
+        user.save()
+    }else{
+        user = users[0]
+    }
+    req.user = user
+    next()
+
 })
 
 app.use('/admin', adminRoutes)
@@ -35,7 +41,19 @@ app.use(shopRoutes)
 app.use(errorRoute)
 
 mongoose.connect('mongodb://127.0.0.1:27017/tradeIn')
-.then(response=>{
+.then(async (response)=>{
+    const users = await User.find()
+    let user;
+    if(users.length == 0 ){
+        user = await new User({
+            name: "John Smith",
+            email: "smith@gmail.com",
+            cart: {
+                products: []
+            }
+        })
+        user.save()
+    }
     console.log("[CONNECTED] Connection Setup Successfully.")
     app.listen(4000)
 })

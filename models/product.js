@@ -1,7 +1,7 @@
 const path = require('path');
 const fs = require('fs');
 const mongoose = require('mongoose');
-const { Schema } = require('mongoose');
+const { Schema, model } = require('mongoose');
 const rootDir = require('../utils/utils');
  
 const ProductSchema = new Schema({
@@ -24,10 +24,14 @@ const ProductSchema = new Schema({
     price: {
         type: Number,
         required: true
+    },
+    userId : {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
     }
 })
 
-module.exports = mongoose.model('Product', ProductSchema);
+module.exports = model('Product', ProductSchema);
 
 // const p = path.join(rootDir, 'data', 'products.json');
 

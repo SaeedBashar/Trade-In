@@ -26,7 +26,6 @@ exports.getProducts = async (req, res, next)=>{
 exports.getProduct = async(req, res, next)=>{
     const prodId = req.params.id;
     const product = await Product.findById(prodId)
-    console.log(product)
     res.render('shop/product-detail', {
         product: product,
         pageTitle: 'Page | Product Detail'
@@ -60,41 +59,54 @@ exports.getIndex = async (req, res, next)=>{
     // })
 }
 
-exports.getCart = (req, res, next)=>{
-    Cart.getCart(cart=>{
-        Product.fetchAll(products=>{
-            const cartProducts = [];
-            for(prod of products){
-                const cartProduct = cart.products.find(p=>p.id === prod.id)
-                if(cartProduct){
-                    cartProducts.push({product: prod, qty: cartProduct.qty})
-                }
-            }
-            res.render('shop/cart', {
-                pageTitle: 'Page | Cart',
-                products: cartProducts,
-                totalPrice : cart.totalPrice.toFixed(2)
-            })
-        })
+exports.getCart = async(req, res, next)=>{
+    const user = await req.user.populate("cart.products.productId")
+    console.log(user.cart.products[0])
+    res.render('shop/cart', {
+        pageTitle: 'Page | Cart',
+        products: user.cart.products,
+        totalPrice : 3000
     })
+    // Cart.getCart(cart=>{
+    //     Product.fetchAll(products=>{
+    //         const cartProducts = [];
+    //         for(prod of products){
+    //             const cartProduct = cart.products.find(p=>p.id === prod.id)
+    //             if(cartProduct){
+    //                 cartProducts.push({product: prod, qty: cartProduct.qty})
+    //             }
+    //         }
+    //         res.render('shop/cart', {
+    //             pageTitle: 'Page | Cart',
+    //             products: cartProducts,
+    //             totalPrice : cart.totalPrice.toFixed(2)
+    //         })
+    //     })
+    // })
    
 }
 
-exports.postCart = (req, res, next)=>{
-    const pid = req.body.productId;
-    Product.findById(pid, ({price})=>{
-        Cart.addProduct(pid, price, req.user.id)
-    })
-    res.redirect('/cart')
+exports.postCart = async (req, res, next)=>{
+    try{
+        const pid = req.body.productId;
+        const product = await Product.findById(pid)
+        await req.user.addToCart(product)
+    }catch(err){
+        console.log(err)
+    }
+    res.redirect('/')
 }
 
-exports.postDeleteCartItem = (req, res, next)=>{
-    const pid = req.body.productId;
-    console.log(pid)
-    Product.findById(pid, ({price})=>{
-        Cart.deleteProduct(pid, price)
-        res.redirect('/cart')
-    })
+exports.postDeleteCartItem = async (req, res, next)=>{
+    try{
+        const pid = req.body.productId;
+       
+        const resp = await req.user.deleteItemFromCart(pid)
+        console.log('[DELETION]', resp)
+    }catch(err){
+        console.log(err)
+    }
+    res.redirect('/cart')
 }
 
 exports.getOrders = (req, res, next)=>{
