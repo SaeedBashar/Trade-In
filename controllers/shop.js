@@ -1,6 +1,5 @@
 
 const Product = require('../models/product');
-const Cart = require('../models/cart');
 const Order = require('../models/order');
 
 exports.getProducts = async (req, res, next)=>{
@@ -9,7 +8,8 @@ exports.getProducts = async (req, res, next)=>{
         // let userProducts = products.filter(p=>p.userId === req.user.id)
         res.render('shop/index', {
             products: products,
-            pageTitle: 'Page | Shop'
+            pageTitle: 'Page | Shop',
+            isAuthenticated : true
         })
     }catch(err){
         console.log(err)
@@ -28,7 +28,8 @@ exports.getProduct = async(req, res, next)=>{
     const product = await Product.findById(prodId)
     res.render('shop/product-detail', {
         product: product,
-        pageTitle: 'Page | Product Detail'
+        pageTitle: 'Page | Product Detail',
+        isAuthenticated : true
     })
     // Product.findById(prodId, product=>{
     //     console.log(product)
@@ -45,7 +46,8 @@ exports.getIndex = async (req, res, next)=>{
         // let userProducts = products.filter(p=>p.userId === req.user.id)
         res.render('shop/index', {
             products: products,
-            pageTitle: 'Page | Shop'
+            pageTitle: 'Page | Shop',
+            isAuthenticated : true
         })
     }catch(err){
         console.log(err)
@@ -63,7 +65,8 @@ exports.getCart = async(req, res, next)=>{
     const user = await req.user.populate("cart.products.productId")
     res.render('shop/cart', {
         pageTitle: 'Page | Cart',
-        products: user.cart.products
+        products: user.cart.products,
+        isAuthenticated : true
     })
     // Cart.getCart(cart=>{
     //     Product.fetchAll(products=>{
@@ -118,7 +121,8 @@ exports.getOrders = async (req, res, next)=>{
     res.render('shop/orders', {
         pageTitle: 'Page | Orders',
         orders: updatedOrders,
-        totalPrice: 1000
+        totalPrice: 1000,
+        isAuthenticated : true
     })
     // Order.getOrders(orders=>{
     //     let userOrders = orders.filter(o=>o.userId === req.user.id)
@@ -169,6 +173,7 @@ exports.postOrders = async(req, res, next)=>{
 
 exports.getCheckout = (req, res, next)=>{
     res.render('shop/checkout', {
-        pageTitle: 'Page | Checkout'
+        pageTitle: 'Page | Checkout',
+        isAuthenticated : true
     })
 }

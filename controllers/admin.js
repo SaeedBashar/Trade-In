@@ -5,7 +5,8 @@ const Product = require('../models/product');
 exports.getAddProduct = (req, res, next)=>{
     res.render('admin/edit-product', {
         pageTitle: 'Page | Add Product',
-        editing: false
+        editing: false,
+        isAuthenticated : true
     })
 }
 
@@ -49,7 +50,8 @@ exports.getEditProduct = async(req, res, next)=>{
         res.render('admin/edit-product', {
             pageTitle: 'Page | Edit Product',
             editing: editMode === 'true',
-            product : product
+            product : product,
+            isAuthenticated : true
         })
     }catch(err){
         console.log(err)
@@ -92,7 +94,8 @@ exports.getProducts = async (req, res, next)=>{
         // let userProducts = products.filter(p=>p.userId === req.user.id)
         res.render('admin/products', {
             products: products,
-            pageTitle: 'Page | Admin Products'
+            pageTitle: 'Page | Admin Products',
+            isAuthenticated : true
         })
     }catch(err){
         console.log(err)

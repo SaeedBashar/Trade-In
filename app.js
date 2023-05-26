@@ -6,6 +6,7 @@ const app = express()
 
 const adminRoutes = require('./routes/admin');
 const shopRoutes = require('./routes/shop');
+const authRoutes = require('./routes/auth');
 const errorRoute = require('./controllers/error');
 const User = require('./models/user')
 
@@ -38,6 +39,7 @@ app.use(async(req, res, next)=>{
 
 app.use('/admin', adminRoutes)
 app.use(shopRoutes)
+app.use(authRoutes)
 app.use(errorRoute)
 
 mongoose.connect('mongodb://127.0.0.1:27017/tradeIn')
