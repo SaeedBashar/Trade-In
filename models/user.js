@@ -33,8 +33,6 @@ UserSchema.methods.addToCart = function(product){
     let pIndex = this.cart.products.findIndex(p=>p.productId.toString() === product._id.toString())
     let updatedProduct;
     let updatedProducts = [...this.cart.products]
-    console.log('one', updatedProducts)
-    console.log('two', pIndex)
     if(pIndex !== -1 ){
         updatedProduct = {...updatedProducts[pIndex]._doc};
         updatedProduct.qty += 1;
@@ -51,6 +49,11 @@ UserSchema.methods.addToCart = function(product){
 UserSchema.methods.deleteItemFromCart = function(productId){
     let updatedProducts = this.cart.products.filter(p=>p.productId.toString() !== productId.toString())
     this.cart.products = updatedProducts;
+    return this.save()
+}
+
+UserSchema.methods.clearCart = function(){
+    this.cart = { products: []}
     return this.save()
 }
 

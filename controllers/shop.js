@@ -61,11 +61,9 @@ exports.getIndex = async (req, res, next)=>{
 
 exports.getCart = async(req, res, next)=>{
     const user = await req.user.populate("cart.products.productId")
-    console.log(user.cart.products[0])
     res.render('shop/cart', {
         pageTitle: 'Page | Cart',
-        products: user.cart.products,
-        totalPrice : 3000
+        products: user.cart.products
     })
     // Cart.getCart(cart=>{
     //     Product.fetchAll(products=>{
@@ -102,45 +100,71 @@ exports.postDeleteCartItem = async (req, res, next)=>{
         const pid = req.body.productId;
        
         const resp = await req.user.deleteItemFromCart(pid)
-        console.log('[DELETION]', resp)
     }catch(err){
         console.log(err)
     }
     res.redirect('/cart')
 }
 
-exports.getOrders = (req, res, next)=>{
-    Order.getOrders(orders=>{
-        let userOrders = orders.filter(o=>o.userId === req.user.id)
-        Product.fetchAll(products=>{
-            let orderProducts;
-            for(let order of userOrders){
-                orderProducts = [...order.products];
-                order.products = orderProducts.map(p=>{
-                    for(prod of products){
-                        if(prod.id == p.id){
-                            return {product : prod, qty: p.qty}
-                        }
-                    }
-                })
-            }
-            res.render('shop/orders', {
-                pageTitle: 'Page | Orders',
-                orders: userOrders
-            })
-        })
+exports.getOrders = async (req, res, next)=>{
+    const orders = await Order.find({"user": req.user._id.toString()})
+    const updatedOrders = orders.map(o=>{
+        let totalPrice = o.products.reduce((t, prod)=>{
+            return t + prod.product.price * prod.qty
+        }, 0)
+        return {...o._doc, totalPrice}
     })
+    console.log(updatedOrders)
+    res.render('shop/orders', {
+        pageTitle: 'Page | Orders',
+        orders: updatedOrders,
+        totalPrice: 1000
+    })
+    // Order.getOrders(orders=>{
+    //     let userOrders = orders.filter(o=>o.userId === req.user.id)
+    //     Product.fetchAll(products=>{
+    //         let orderProducts;
+    //         for(let order of userOrders){
+    //             orderProducts = [...order.products];
+    //             order.products = orderProducts.map(p=>{
+    //                 for(prod of products){
+    //                     if(prod.id == p.id){
+    //                         return {product : prod, qty: p.qty}
+    //                     }
+    //                 }
+    //             })
+    //         }
+    //         res.render('shop/orders', {
+    //             pageTitle: 'Page | Orders',
+    //             orders: userOrders
+    //         })
+    //     })
+    // })
 }
 
-exports.postOrders = (req, res, next)=>{
-    Cart.getCart(cart=>{
-        let id = Date.now() + parseInt(Math.random() * 100)
-        let order = new Order(id, cart.userId, cart.products, cart.totalPrice)
-        order.saveOrder(()=>{
-            res.redirect('/order')
+exports.postOrders = async(req, res, next)=>{
+    try{
+        const user = await req.user.populate("cart.products.productId")
+        console.log(user.cart.products)
+        const order = await new Order({
+            user: user,
+            products: [...user.cart.products.map(p=>({product: {...p.productId}, qty: p.qty}))]
         })
-        Cart.deleteCart()
-    })
+        await order.save()
+        req.user.clearCart()
+    }catch(err){
+        console.log(err)
+    }
+    res.redirect('/order')
+
+    // Cart.getCart(cart=>{
+    //     let id = Date.now() + parseInt(Math.random() * 100)
+    //     let order = new Order(id, cart.userId, cart.products, cart.totalPrice)
+    //     order.saveOrder(()=>{
+    //         res.redirect('/order')
+    //     })
+    //     Cart.deleteCart()
+    // })
 }
 
 exports.getCheckout = (req, res, next)=>{
