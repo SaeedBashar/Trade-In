@@ -31,10 +31,8 @@ app.use(session({
     })
 )
 app.use(async(req, res, next)=>{
-    console.log(req.session)
     if(req.session.user){
         const user = await User.findById(req.session.user._id)
-        console.log(user)
         req.user = user
     }
     next()
@@ -47,18 +45,20 @@ app.use(errorRoute)
 
 mongoose.connect(process.env.MONGO_URI)
 .then(async (response)=>{
-    const users = await User.find()
-    let user;
-    if(users.length == 0 ){
-        user = await new User({
-            name: "John Smith",
-            email: "smith@gmail.com",
-            cart: {
-                products: []
-            }
-        })
-        user.save()
-    }
+
+    // const users = await User.find()
+    // await User.findByIdAndRemove(users[0]._id)
+    // let user;
+    // if(users.length == 0 ){
+    //     user = await new User({
+    //         name: "John Smith",
+    //         email: "smith@gmail.com",
+    //         cart: {
+    //             products: []
+    //         }
+    //     })
+    //     user.save()
+    // }
     console.log("[CONNECTED] Connection Setup Successfully.")
     app.listen(4000)
 })
