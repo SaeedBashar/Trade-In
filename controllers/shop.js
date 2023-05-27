@@ -9,7 +9,7 @@ exports.getProducts = async (req, res, next)=>{
         res.render('shop/index', {
             products: products,
             pageTitle: 'Page | Shop',
-            isAuthenticated : true
+            isAuthenticated:req.session.isLoggedIn
         })
     }catch(err){
         console.log(err)
@@ -29,7 +29,7 @@ exports.getProduct = async(req, res, next)=>{
     res.render('shop/product-detail', {
         product: product,
         pageTitle: 'Page | Product Detail',
-        isAuthenticated : true
+        isAuthenticated:req.session.isLoggedIn
     })
     // Product.findById(prodId, product=>{
     //     console.log(product)
@@ -47,7 +47,7 @@ exports.getIndex = async (req, res, next)=>{
         res.render('shop/index', {
             products: products,
             pageTitle: 'Page | Shop',
-            isAuthenticated : true
+            isAuthenticated:req.session.isLoggedIn
         })
     }catch(err){
         console.log(err)
@@ -66,7 +66,7 @@ exports.getCart = async(req, res, next)=>{
     res.render('shop/cart', {
         pageTitle: 'Page | Cart',
         products: user.cart.products,
-        isAuthenticated : true
+        isAuthenticated:req.session.isLoggedIn
     })
     // Cart.getCart(cart=>{
     //     Product.fetchAll(products=>{
@@ -122,7 +122,7 @@ exports.getOrders = async (req, res, next)=>{
         pageTitle: 'Page | Orders',
         orders: updatedOrders,
         totalPrice: 1000,
-        isAuthenticated : true
+        isAuthenticated:req.session.isLoggedIn
     })
     // Order.getOrders(orders=>{
     //     let userOrders = orders.filter(o=>o.userId === req.user.id)
@@ -174,6 +174,6 @@ exports.postOrders = async(req, res, next)=>{
 exports.getCheckout = (req, res, next)=>{
     res.render('shop/checkout', {
         pageTitle: 'Page | Checkout',
-        isAuthenticated : true
+        isAuthenticated:req.session.isLoggedIn
     })
 }

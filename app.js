@@ -2,6 +2,9 @@ const express = require('express')
 const path = require('path')
 const rootDir = require('./utils/utils')
 const mongoose = require('mongoose')
+const session = require('express-session')
+const mongoStore = require('connect-mongodb-session')(session)
+require('dotenv').config()
 const app = express()
 
 const adminRoutes = require('./routes/admin');
@@ -13,28 +16,28 @@ const User = require('./models/user')
 app.set('view engine', 'ejs');
 app.set('views', 'views')
 
+const store = new mongoStore({
+    uri: process.env.MONGO_URI,
+    collection: 'sessions'
+})
+
 app.use(express.urlencoded({extended: false}))
-
 app.use(express.static(path.join(rootDir, 'public')))
-
+app.use(session({
+        secret: process.env.SESSION_SECRET, 
+        resave: false, 
+        saveUninitialized: false,
+        store: store
+    })
+)
 app.use(async(req, res, next)=>{
-    const users = await User.find()
-    let user;
-    if(users.length == 0 ){
-        user = await new User({
-            name: "John Smith",
-            email: "smith@gmail.com",
-            cart: {
-                products: []
-            }
-        })
-        user.save()
-    }else{
-        user = users[0]
+    console.log(req.session)
+    if(req.session.user){
+        const user = await User.findById(req.session.user._id)
+        console.log(user)
+        req.user = user
     }
-    req.user = user
     next()
-
 })
 
 app.use('/admin', adminRoutes)
@@ -42,7 +45,7 @@ app.use(shopRoutes)
 app.use(authRoutes)
 app.use(errorRoute)
 
-mongoose.connect('mongodb://127.0.0.1:27017/tradeIn')
+mongoose.connect(process.env.MONGO_URI)
 .then(async (response)=>{
     const users = await User.find()
     let user;

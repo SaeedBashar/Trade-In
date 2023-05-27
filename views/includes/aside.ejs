@@ -16,43 +16,53 @@
           <span>Products</span>
         </a>
       </li>
+      <% if(isAuthenticated) {%>
 
-      <li class="nav-item">
-        <a class="nav-link collapsed" href="/cart">
-          <i class="bi bi-grid"></i>
-          <span>Cart</span>
-        </a>
-      </li>
+        <li class="nav-item">
+          <a class="nav-link collapsed" href="/cart">
+            <i class="bi bi-grid"></i>
+            <span>Cart</span>
+          </a>
+        </li>
 
-      <li class="nav-item">
-        <a class="nav-link collapsed" href="/order">
-          <i class="bi bi-grid"></i>
-          <span>Orders</span>
-        </a>
-      </li>
+        <li class="nav-item">
+          <a class="nav-link collapsed" href="/order">
+            <i class="bi bi-grid"></i>
+            <span>Orders</span>
+          </a>
+        </li>
+          <li class="nav-item">
+            <a class="nav-link collapsed" href="/admin/add-product">
+              <i class="bi bi-grid"></i>
+              <span>Add Product</span>
+            </a>
+          </li>
 
-      <li class="nav-item">
-        <a class="nav-link collapsed" href="/admin/add-product">
-          <i class="bi bi-grid"></i>
-          <span>Add Product</span>
-        </a>
-      </li>
-
-      <li class="nav-item">
-        <a class="nav-link collapsed" href="/admin/products">
-          <i class="bi bi-grid"></i>
-          <span>Admin Products</span>
-        </a>
-      </li>
-      
+          <li class="nav-item">
+            <a class="nav-link collapsed" href="/admin/products">
+              <i class="bi bi-grid"></i>
+              <span>Admin Products</span>
+            </a>
+          </li>
+      <% } %>
       <li class="nav-heading">Action</li>
-
-      <li class="nav-item">
-        <a class="nav-link collapsed" href="/sign-out">
-          <i class="bi bi-grid"></i>
-          <span>Sign Out</span>
-        </a>
+      <% if(!isAuthenticated) {%>
+        <li class="nav-item">
+          <a class="nav-link collapsed" href="/sign-in">
+            <i class="bi bi-grid"></i>
+            <span>Sign In</span>
+          </a>
       </li>
+      <% } %>
+      <% if(isAuthenticated) {%>
+          <li class="nav-item">
+            <form class="d-inline" action="/sign-out" method="POST">
+              <button class="btn nav-link collapsed" >
+                <i class="bi bi-grid"></i>
+                <span>Sign Out</span>
+              </button>
+            </form>
+          </li>
+      <% } %>
     </ul>
-
 </aside>
