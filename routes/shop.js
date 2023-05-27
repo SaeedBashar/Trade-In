@@ -6,6 +6,7 @@ const {
      getProduct, postCart,
      postDeleteCartItem, 
      getOrders, postOrders} = require('../controllers/shop');
+const { isAuthenticated } = require('../middleware/auth');
 
 
 const router = express.Router()
@@ -13,11 +14,11 @@ const router = express.Router()
 router.get('/', getIndex)
 router.get('/products', getProducts)
 router.get('/products/:id', getProduct)
-router.get('/cart', getCart)
-router.post('/cart', postCart)
-router.post('/delete-cart-item', postDeleteCartItem)
-router.get('/order', getOrders)
-router.post('/order', postOrders)
-router.get('/checkout', getCheckout)
+router.get('/cart', isAuthenticated, getCart)
+router.post('/cart', isAuthenticated, postCart)
+router.post('/delete-cart-item', isAuthenticated, postDeleteCartItem)
+router.get('/order', isAuthenticated, getOrders)
+router.post('/order', isAuthenticated, postOrders)
+router.get('/checkout', isAuthenticated, getCheckout)
 
 module.exports = router

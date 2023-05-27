@@ -6,7 +6,7 @@ exports.getAddProduct = (req, res, next)=>{
     res.render('admin/edit-product', {
         pageTitle: 'Page | Add Product',
         editing: false,
-        isAuthenticated:req.session.isLoggedIn
+        
     })
 }
 
@@ -51,7 +51,7 @@ exports.getEditProduct = async(req, res, next)=>{
             pageTitle: 'Page | Edit Product',
             editing: editMode === 'true',
             product : product,
-            isAuthenticated:req.session.isLoggedIn
+            
         })
     }catch(err){
         console.log(err)
@@ -95,7 +95,7 @@ exports.getProducts = async (req, res, next)=>{
         res.render('admin/products', {
             products: products,
             pageTitle: 'Page | Admin Products',
-            isAuthenticated:req.session.isLoggedIn
+            
         })
     }catch(err){
         console.log(err)

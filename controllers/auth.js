@@ -2,16 +2,25 @@ const bcrypt = require('bcryptjs')
 const User = require('../models/user')
 
 exports.getSignIn = (req, res, next)=>{
-    res.render('auth/signin', {pageTitle: "Page | Sign In"})
+    res.render('auth/signin', {
+        pageTitle: "Page | Sign In",
+        errorMsgs: req.flash('authError')
+    })
 }
 
 exports.postSignIn = async (req, res, next)=>{
     const { email, password } = req.body;
     const user = await User.findOne({email: email})
-    if(!user) return res.redirect('/sign-in')
+    if(!user) {
+        req.flash('authError', 'Invalid Email!!')
+        return res.redirect('/sign-in')
+    }
     
     let isValidPassword = await bcrypt.compare(password, user.password)
-    if(!isValidPassword) return res.redirect('/sign-in')
+    if(!isValidPassword) {
+        req.flash('authError', 'Invalid Password!!')
+        return res.redirect('/sign-in')
+    }
 
     req.session.isLoggedIn = true
     req.session.user = user
@@ -19,7 +28,10 @@ exports.postSignIn = async (req, res, next)=>{
 }
 
 exports.getSignUp = (req, res, next)=>{
-    res.render('auth/signup', {pageTitle: "Page | Sign Up"})
+    res.render('auth/signup', {
+        pageTitle: "Page | Sign Up",
+        errorMsgs: req.flash('signUpError')
+    })
 }
 
 exports.postSignUp = async (req, res, next)=>{
@@ -27,7 +39,10 @@ exports.postSignUp = async (req, res, next)=>{
         const { name, email, password } = req.body;
 
         let user = await User.findOne({email: email})
-        if(user) return res.redirect('/sign-up')
+        if(user) {
+            req.flash('signUpError', 'Email Exist Already!!')
+            return res.redirect('/sign-up')
+        }
 
         hashedPassword = await bcrypt.hash(password, 12)
 

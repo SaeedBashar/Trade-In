@@ -63,6 +63,7 @@
       <% if(isAuthenticated) {%>
           <li class="nav-item">
             <form class="d-inline" action="/sign-out" method="POST">
+              <input type="hidden" value="<%= csrfToken %>" name="_csrf">
               <button class="btn nav-link collapsed" >
                 <i class="bi bi-grid"></i>
                 <span>Sign Out</span>

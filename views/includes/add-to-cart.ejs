@@ -3,6 +3,7 @@
 
 <% if(isAuthenticated) {%>
     <form class="d-inline" action="/cart" method="POST">
+        <input type="hidden" value="<%= csrfToken %>" name="_csrf">
         <input type="hidden" name="productId" value="<%= pid %>">
         <button class="btn btn-outline-secondary" type="submit">Add To Cart</button>
     </form>

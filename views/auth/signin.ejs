@@ -23,8 +23,14 @@
                     <h5 class="card-title text-center pb-0 fs-4">Login to Your Account</h5>
                     <p class="text-center small">Enter your username & password to login</p>
                   </div>
-
-                  <form action="/sign-in" method="POST" class="row g-3">
+                  <% if(errorMsgs.length > 0) {%>
+                    <% errorMsgs.forEach(err=> { %>
+                      <div class="c-alert alert alert-danger" role="alert">
+                        <%= err %>
+                      </div>
+                    <% }) %>
+                  <% } %>
+                  <form action="/sign-in" method="POST" class="row g-3" novalidate>
 
                     <div class="col-12">
                       <label for="email" class="form-label">Email</label>
@@ -48,6 +54,7 @@
                       </div>
                     </div>
                     <div class="col-12">
+                      <input type="hidden" value="<%= csrfToken %>" name="_csrf">
                       <button class="btn btn-primary w-100" type="submit">Login</button>
                     </div>
                     <div class="col-12">
