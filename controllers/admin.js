@@ -26,8 +26,7 @@ exports.postAddProduct = async (req, res,next)=>{
             imageUrl,
             userId
         })
-        const resp = await product.save()
-        console.log(resp)
+        await product.save()
     }catch(err){
         console.log(err)
 
@@ -56,40 +55,31 @@ exports.getEditProduct = async(req, res, next)=>{
     }catch(err){
         console.log(err)
     }
-    
-    // Product.findById(productId, product=>{
-    //     if(!product) return redirect('/')
-    //     res.render('admin/edit-product', {
-    //         pageTitle: 'Page | Edit Product',
-    //         editing: editMode === 'true',
-    //         product : product
-    //     })
-    // })
 }
 
 exports.postEditProduct = async (req, res, next)=>{
   
     try{
         const product = await Product.findById(req.body.productId)
-        product.title = req.body.title
-        product.description = req.body.description
-        product.price = req.body.price
-        product.category = req.body.category
-        product.imageUrl = req.body.imageUrl
-
-        product.save()
+        if(req.user._id.toString() === product.userId.toString()){
+            product.title = req.body.title
+            product.description = req.body.description
+            product.price = req.body.price
+            product.category = req.body.category
+            product.imageUrl = req.body.imageUrl
+    
+            product.save()
+        }
+            
     }catch(err){
         console.log(err)
     }
     res.redirect('/')
-
-    // const product = new Product(pid, title, category, imageUrl, description, price, req.user.id)
-    // product.save()
 }
 
 exports.getProducts = async (req, res, next)=>{
     try{
-        const products = await Product.find().populate("userId")
+        const products = await Product.find({userId: req.user._id}).populate("userId")
         console.log(products)
         // let userProducts = products.filter(p=>p.userId === req.user.id)
         res.render('admin/products', {
@@ -100,23 +90,14 @@ exports.getProducts = async (req, res, next)=>{
     }catch(err){
         console.log(err)
     }
-    
-    // Product.fetchAll(products=>{
-    //     let userProducts = products.filter(p=>p.userId === req.user.id)
-    //     res.render('admin/products', {
-    //         products: userProducts,
-    //         pageTitle: 'Page | Admin Products'
-    //     })
-    // })
 }
 
 exports.postDeleteProduct = async (req, res, next)=>{
     try{
         const pid = req.body.productId;
-        const resp = await Product.findByIdAndRemove(pid)
+        await Product.deleteOne({_id: pid, userId: req.user._id})
     }catch(err){
         console.log(err)
     }
-    // Product.deleteById(pid)
     res.redirect('/admin/products')
 }
