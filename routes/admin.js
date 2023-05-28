@@ -1,4 +1,5 @@
 const express = require('express');
+
 const router = express.Router();
 
 const { isAuthenticated } = require('../middleware/auth');
@@ -8,7 +9,7 @@ const {
     postEditProduct, postDeleteProduct 
 } = require('../controllers/admin')
 
-router.get('/add-product',isAuthenticated, getAddProduct)
+router.get('/add-product', isAuthenticated, getAddProduct)
 
 router.get('/products', isAuthenticated, getProducts)
 

@@ -1,14 +1,24 @@
 const bcrypt = require('bcryptjs')
 const User = require('../models/user')
-
+const { validationResult } = require('express-validator')
 exports.getSignIn = (req, res, next)=>{
     res.render('auth/signin', {
         pageTitle: "Page | Sign In",
-        errorMsgs: req.flash('authError')
+        errorMsgs: req.flash('authError').map(err=>({msg: err}))
     })
 }
 
 exports.postSignIn = async (req, res, next)=>{
+
+    const vResults = validationResult(req)
+    console.log(vResults)
+    if(vResults.errors.length > 0){
+        return res.render('auth/signin', {
+            pageTitle: "Page | Sign In",
+            errorMsgs: vResults.errors
+        })
+    }
+
     const { email, password } = req.body;
     const user = await User.findOne({email: email})
     if(!user) {

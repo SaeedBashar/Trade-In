@@ -1,17 +1,18 @@
 
 const Product = require('../models/product');
+const { validationResult } = require('express-validator')
 
 
 exports.getAddProduct = (req, res, next)=>{
     res.render('admin/edit-product', {
         pageTitle: 'Page | Add Product',
-        editing: false,
-        
+        editing: false
     })
 }
 
 exports.postAddProduct = async (req, res,next)=>{
     try{
+
         let title = req.body.title
         let description = req.body.description
         let price = req.body.price
@@ -32,10 +33,6 @@ exports.postAddProduct = async (req, res,next)=>{
 
     }
     res.redirect('/admin/products')
-
-    // const product = new Product(null, title, category, imageUrl, description, price, userId)
-    // product.save()
-    // res.redirect('/')
 }
 
 exports.getEditProduct = async(req, res, next)=>{
@@ -50,7 +47,6 @@ exports.getEditProduct = async(req, res, next)=>{
             pageTitle: 'Page | Edit Product',
             editing: editMode === 'true',
             product : product,
-            
         })
     }catch(err){
         console.log(err)

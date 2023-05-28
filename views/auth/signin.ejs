@@ -29,11 +29,11 @@
                   <% if(errorMsgs.length > 0) {%>
                     <% errorMsgs.forEach(err=> { %>
                       <div class="c-alert alert alert-danger" role="alert">
-                        <%= err %>
+                        <%= err.msg %>
                       </div>
                     <% }) %>
                   <% } %>
-                  <form action="/sign-in" method="POST" class="row g-3" novalidate>
+                  <form action="/sign-in" method="POST" class="row g-3 needs-validation" novalidate>
 
                     <div class="col-12">
                       <label for="email" class="form-label">Email</label>
