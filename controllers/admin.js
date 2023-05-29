@@ -2,6 +2,7 @@
 const Product = require('../models/product');
 const { validationResult } = require('express-validator')
 const path = require('path')
+const fileUtil = require('../utils/file')
 
 exports.getAddProduct = (req, res, next)=>{
     res.render('admin/edit-product', {
@@ -22,7 +23,6 @@ exports.postAddProduct = async (req, res,next)=>{
         let userId = req.user
 
         if(!image) {
-            console.log(image)
             console.log('error here')
             throw new Error("Invalid Image value")
         }
@@ -67,12 +67,17 @@ exports.postEditProduct = async (req, res, next)=>{
     try{
         const product = await Product.findById(req.body.productId)
         if(req.user._id.toString() === product.userId.toString()){
+            if(image){
+                fileUtil.deleteFile(product.imageUrl)
+            }
+
             product.title = req.body.title
             product.description = req.body.description
             product.price = req.body.price
             product.category = req.body.category
-            product.imageUrl = req.body.imageUrl
-    
+            product.imageUrl = path.join('/', req.file.filename)
+            
+            
             product.save()
         }
             
@@ -99,6 +104,10 @@ exports.getProducts = async (req, res, next)=>{
 exports.postDeleteProduct = async (req, res, next)=>{
     try{
         const pid = req.body.productId;
+        const product = await Product.findById(pid)
+        if(image){
+            fileUtil.deleteFile(product.imageUrl)
+        }
         await Product.deleteOne({_id: pid, userId: req.user._id})
     }catch(err){
         console.log(err)

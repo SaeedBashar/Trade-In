@@ -1,3 +1,6 @@
+const fs = require('fs');
+const path = require('path');
+const pdfDocument = require('pdfkit');
 
 const Product = require('../models/product');
 const Order = require('../models/order');
@@ -88,7 +91,7 @@ exports.getOrders = async (req, res, next)=>{
         pageTitle: 'Page | Orders',
         orders: updatedOrders,
         totalPrice: 1000,
-        
+        errorMsgs: req.flash('error').map(e=>({msg: e}))
     })
     // Order.getOrders(orders=>{
     //     let userOrders = orders.filter(o=>o.userId === req.user.id)
@@ -135,6 +138,56 @@ exports.postOrders = async(req, res, next)=>{
     //     })
     //     Cart.deleteCart()
     // })
+}
+
+exports.getInvoice = async (req, res, next)=>{
+    try{
+        const orderId = req.params.id;
+
+        const order = await Order.findById(orderId)
+        if(!order) throw new Error('No Invoice')
+        if(req.user._id.toString() !== order.user.toString()){
+            throw new Error('Access Error')
+        }
+        const invoiceName = 'invoice-' + orderId + '.pdf';
+        const pathName = path.join('data', 'invoices', invoiceName);
+        
+        const pdfDoc = new pdfDocument()
+        res.setHeader('Content-Type', 'application/pdf')
+        res.setHeader('Content-Disposition', 'inline; filename="' + invoiceName + '"')
+        pdfDoc.pipe(fs.createWriteStream(pathName));
+        pdfDoc.pipe(res)
+ 
+        pdfDoc.fontSize(30).text('Invoice', {underline: true})
+        pdfDoc.fontSize(16).text('=======================================')
+        let totalPrice = 0;
+        order.products.forEach(prod=>{
+            totalPrice += (prod.product.price * prod.qty)
+            pdfDoc.text('----------------------------------')
+            pdfDoc.text('Product Title - ' + prod.product.title)
+            pdfDoc.text('Product Quantity - ' + prod.qty)
+            pdfDoc.text('Product price - $ ' + (prod.product.price * prod.qty))
+            pdfDoc.text('----------------------------------')
+        })
+        pdfDoc.text('Total Price - $ ' + totalPrice)
+        pdfDoc.text('----------------------------------')
+        pdfDoc.end()
+        // fs.readFile(pathName, (err, data)=>{
+        //     if(err) throw err
+        //     res.setHeader('Content-Type', 'application/pdf')
+        //     res.setHeader('Content-Disposition', 'inline; filename="' + invoiceName + '"')
+        //     res.send(data)
+        // })
+        // const file = fs.createReadStream(pathName)
+        // res.setHeader('Content-Type', 'application/pdf')
+        // res.setHeader('Content-Disposition', 'inline; filename="' + invoiceName + '"')
+        // file.pipe(res)
+    }catch(err){
+        console.log(err)
+        req.flash('error', 'Error Accessing Invoice')
+        res.redirect('/order')
+    }
+    
 }
 
 exports.getCheckout = (req, res, next)=>{
