@@ -84,7 +84,6 @@ exports.getOrders = async (req, res, next)=>{
         }, 0)
         return {...o._doc, totalPrice}
     })
-    console.log(updatedOrders)
     res.render('shop/orders', {
         pageTitle: 'Page | Orders',
         orders: updatedOrders,

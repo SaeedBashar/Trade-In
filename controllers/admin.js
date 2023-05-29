@@ -1,12 +1,13 @@
 
 const Product = require('../models/product');
 const { validationResult } = require('express-validator')
-
+const path = require('path')
 
 exports.getAddProduct = (req, res, next)=>{
     res.render('admin/edit-product', {
         pageTitle: 'Page | Add Product',
-        editing: false
+        editing: false,
+        errorMsgs: req.flash('error').map(e=>({msg: e}))
     })
 }
 
@@ -17,22 +18,29 @@ exports.postAddProduct = async (req, res,next)=>{
         let description = req.body.description
         let price = req.body.price
         let category = req.body.category
-        let imageUrl = req.body.imageUrl
+        let image = req.file
         let userId = req.user
+
+        if(!image) {
+            console.log(image)
+            console.log('error here')
+            throw new Error("Invalid Image value")
+        }
+
         const product = new Product({
             title,
             description,
             price,
             category,
-            imageUrl,
+            imageUrl: path.join('/', image.filename),
             userId
         })
         await product.save()
+        res.redirect('/admin/products')
     }catch(err){
-        console.log(err)
-
+        req.flash('error', 'An Error Occured While adding Product!!');
+        return res.redirect('/admin/add-product')
     }
-    res.redirect('/admin/products')
 }
 
 exports.getEditProduct = async(req, res, next)=>{
@@ -47,6 +55,7 @@ exports.getEditProduct = async(req, res, next)=>{
             pageTitle: 'Page | Edit Product',
             editing: editMode === 'true',
             product : product,
+            errorMsgs: req.flash('error').map(e=>({msg: e}))
         })
     }catch(err){
         console.log(err)
@@ -67,17 +76,16 @@ exports.postEditProduct = async (req, res, next)=>{
             product.save()
         }
             
+        res.redirect('/admin/products')
     }catch(err){
-        console.log(err)
+        req.flash('error', 'An Error Occured While Editing Product!!');
+        return res.redirect(`/admin/edit-product/${req.body.productId}?edit=true`)
     }
-    res.redirect('/')
 }
 
 exports.getProducts = async (req, res, next)=>{
     try{
         const products = await Product.find({userId: req.user._id}).populate("userId")
-        console.log(products)
-        // let userProducts = products.filter(p=>p.userId === req.user.id)
         res.render('admin/products', {
             products: products,
             pageTitle: 'Page | Admin Products',

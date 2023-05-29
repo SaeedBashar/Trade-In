@@ -31,17 +31,17 @@
                           </div>
                         <% }) %>
                       <% } %>
-                        <form action="/admin/<% if(editing) {%>edit-product<%}else{%>add-product<% }%>" method="POST">
+                        <form action="/admin/<% if(editing) {%>edit-product<%}else{%>add-product<% }%>" method="POST" enctype="multipart/form-data">
                             <div class="row mb-3">
                                 <label for="title" class="col-md-4 col-lg-3 col-form-label">Title</label>
                                 <div class="col-md-8 col-lg-9">
-                                <input name="title" type="title" class="form-control" id="title" value="<% if(editing || hasError) {%><%=product.title%><%}%>">
+                                <input name="title" type="title" class="form-control" id="title" value="<% if(editing) {%><%=product.title%><%}%>">
                                 </div>
                             </div>
                             <div class="row mb-3">
                               <label class="col-md-4 col-lg-3 col-form-label">Category</label>
                               <div class="col-md-8 col-lg-9">
-                                <select name="category" value="<% if(editing || hasError) {%><%=product.category%><%}%>" id="category" class="form-select" aria-label="Default select example">
+                                <select name="category" value="<% if(editing) {%><%=product.category%><%}%>" id="category" class="form-select" aria-label="Default select example">
                                   <option <% if(!editing) { %> selected <% } %> ></option>
                                   <option value="Men Shoes" <% if(editing && product.category == "Men Shoes") { %> selected <% } %> >Men Shoes</option>
                                   <option value="Women Shoes" <% if(editing && product.category == "Women Shoes") { %> selected <% } %> >Women Shoes</option>
@@ -52,19 +52,25 @@
                             <div class="row mb-3">
                                 <label for="price" class="col-md-4 col-lg-3 col-form-label">Price</label>
                                 <div class="col-md-8 col-lg-9">
-                                <input name="price" type="number" value="<% if(editing || hasError) {%><%=product.price%><%}%>" class="form-control" id="price" step="0.01">
+                                <input name="price" type="number" value="<% if(editing) {%><%=product.price%><%}%>" class="form-control" id="price" step="0.01">
                                 </div>
                             </div>
                             <div class="row mb-3">
+                              <label for="image" class="col-md-4 col-lg-3 col-form-label">Image</label>
+                              <div class="col-md-8 col-lg-9">
+                                <input class="form-control" type="file" name="image" id="image">
+                              </div>
+                            </div>
+                            <!-- <div class="row mb-3">
                                 <label for="imageUrl" class="col-md-4 col-lg-3 col-form-label">imageUrl</label>
                                 <div class="col-md-8 col-lg-9">
-                                <input name="imageUrl" type="imageUrl" value="<% if(editing || hasError) {%><%=product.imageUrl%><%}%>" class="form-control" id="imageUrl">
+                                <input name="imageUrl" type="imageUrl" value="<% if(editing) {%><%=product.imageUrl%><%}%>" class="form-control" id="imageUrl">
                                 </div>
-                            </div>
+                            </div> -->
                             <div class="row mb-3">
                               <label for="description" class="col-md-4 col-lg-3 col-form-label">Description</label>
                               <div class="col-md-8 col-lg-9">
-                                <textarea name="description" class="form-control" id="description" style="height: 100px"><% if(editing || hasError) {%><%=product.description%><%}%></textarea>
+                                <textarea name="description" class="form-control" id="description" style="height: 100px"><% if(editing) {%><%=product.description%><%}%></textarea>
                               </div>
                             </div>
                             <% if(editing) { %>
