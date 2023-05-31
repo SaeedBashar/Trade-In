@@ -4,6 +4,7 @@ const pdfDocument = require('pdfkit');
 
 const Product = require('../models/product');
 const Order = require('../models/order');
+const { verifyPayment } = require('../utils/file');
 
 exports.getProducts = async (req, res, next)=>{
     try{
@@ -36,6 +37,7 @@ exports.getProduct = async(req, res, next)=>{
 }
 
 exports.getIndex = async (req, res, next)=>{
+    console.log(req.user)
     try{
         const products = await Product.find()
         // let userProducts = products.filter(p=>p.userId === req.user.id)
@@ -90,7 +92,6 @@ exports.getOrders = async (req, res, next)=>{
     res.render('shop/orders', {
         pageTitle: 'Page | Orders',
         orders: updatedOrders,
-        totalPrice: 1000,
         errorMsgs: req.flash('error').map(e=>({msg: e}))
     })
     // Order.getOrders(orders=>{
@@ -118,7 +119,6 @@ exports.getOrders = async (req, res, next)=>{
 exports.postOrders = async(req, res, next)=>{
     try{
         const user = await req.user.populate("cart.products.productId")
-        console.log(user.cart.products)
         const order = await new Order({
             user: user,
             products: [...user.cart.products.map(p=>({product: {...p.productId}, qty: p.qty}))]
@@ -190,9 +190,61 @@ exports.getInvoice = async (req, res, next)=>{
     
 }
 
-exports.getCheckout = (req, res, next)=>{
-    res.render('shop/checkout', {
-        pageTitle: 'Page | Checkout',
-        
+// exports.getCheckout = async(req, res, next)=>{
+//     const user = await req.user.populate("cart.products.productId")
+//     let totalPrice = 0
+//     totalPrice = user.cart.products.reduce((t, p)=>(t + (p.productId.price * p.qty)))
+//     res.render('shop/checkout', {
+//         pageTitle: 'Page | Checkout',
+//         products: user.cart.products,
+//         totalPrice :totalPrice
+//     })
+// }
+
+exports.getCheckout = async(req,res, next)=>{
+    const user = await req.user.populate("cart.products.productId")
+    
+    let totalPrice = 0
+    user.cart.products.forEach(p=>{
+        totalPrice += (p.productId.price * p.qty)
     })
+
+    const https = require('https')
+
+    const params = JSON.stringify({
+    "email": req.user.email,
+    "amount": totalPrice * 100
+    })
+
+    const options = {
+    hostname: 'api.paystack.co',
+    port: 443,
+    path: '/transaction/initialize',
+    callback_url: 'http://localhost:4000/order',
+    method: 'POST',
+    headers: {
+        Authorization: 'Bearer ' + process.env.PAYSTACK_SECRET_KEY,
+        'Content-Type': 'application/json'
+    }
+    }
+
+    const reqps = https.request(options, resps => {
+    let data = ''
+
+    resps.on('data', (chunk) => {
+        data += chunk
+    });
+
+    resps.on('end', () => {
+        const resData = JSON.parse(data)
+        res.redirect(resData.data.authorization_url)
+        // res.send(data)
+        console.log()
+    })
+    }).on('error', error => {
+    console.error(error)
+    })
+
+    reqps.write(params)
+    reqps.end()
 }

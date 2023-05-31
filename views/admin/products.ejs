@@ -23,7 +23,7 @@
           <div class="row">
             <% if(products.length > 0){%>
               <% for(let p of products) {%>
-                <div class="col-xxl-4 col-sm-4">
+                <div class="product-item col-xxl-4 col-sm-4">
                   <div class="card">
                     <img src="<%= p.imageUrl %>" class="card-img-top" alt="...">
                     <div class="card-body">
@@ -34,11 +34,9 @@
                       </div>
                       <div class="">
                         <a href="/admin/edit-product/<%= p._id %>?edit=true" class="btn btn-outline-secondary">Edit</a>
-                        <form class="d-inline" action="/admin/delete-product" method="POST">
-                          <input type="hidden" value="<%= csrfToken %>" name="_csrf">
-                          <input type="hidden" name="productId" value="<%= p._id %>">
-                          <button class="btn btn-outline-danger">Delete</button>
-                        </form>
+                        <input type="hidden" value="<%= csrfToken %>" name="_csrf">
+                        <input type="hidden" name="productId" value="<%= p._id %>">
+                        <button class="btn btn-outline-danger" onclick="deleteProduct(this)">Delete</button>
                       </div>
                     </div>
                   </div>
@@ -56,5 +54,7 @@
     </section>
 
   </main>
-
+  
+  <%- include('../includes/modal.ejs') %>
   <%- include('../includes/foot.ejs') %>
+  <script src="/js/admin.js" type="text/javascript"></script>

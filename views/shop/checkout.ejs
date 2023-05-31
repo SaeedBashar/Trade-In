@@ -4,5 +4,61 @@
 
   <%- include('../includes/aside.ejs') %>
   
+  <main id="main" class="main">
+    <div class="row">
+        <div class="col-12">
+          <div class="card cart">
 
+            <div class="card-body pb-0">
+              <h5 class="card-title">Your Cart <span>| Products</span></h5>
+
+              <table class="table table-borderless">
+                <thead>
+                  <tr>
+                    <th scope="col">Preview</th>
+                    <th scope="col">Product</th>
+                    <th scope="col">Quantity</th>
+                    <th scope="col">Price</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <% if(products.length > 0) {%>
+                    <% products.forEach(prod=>{ %>
+                      <tr>
+                        <th scope="row"><a href="#"><img class="cart-img" src="<%= prod.productId.imageUrl %>" alt=""></a></th>
+                        <td><a href="#" class="text-primary fw-bold"><%= prod.productId.title %></a></td>
+                        <td><%= prod.qty %></td>
+                        <td class="fw-bold">$ <%= (prod.productId.price * prod.qty).toFixed(2) %></td>
+                        
+                      </tr>
+                      <% } ) %>
+                      
+                      <tr>
+                        <td></td>
+                        <td colspan="3" class="text-center">
+                          <!-- <form class="d-inline" action="/order" method="POST">
+                            <input type="hidden" value="<%= csrfToken %>" name="_csrf">
+                            <button class="btn btn-outline-primary">Order Now!</button>
+                          </form> -->
+                          <button class="btn btn-outline-info" onclick="checkout()">Pay</button>
+                        </td>
+                        <td></td>
+                      </tr>
+                  <% } else { %>
+                    <tr>
+                      <td colspan="4" class="text-center text-secondary">
+                        <b>No Items To Checkout</b>
+                      </td>
+                    </tr>
+                  <% } %>
+                </tbody>
+              </table>
+
+            </div>
+
+          </div>
+        </div>
+    </div>
+  </main>
   <%- include('../includes/foot.ejs') %>
+  <script src="/js/admin.js" type="text/javascript"></script>

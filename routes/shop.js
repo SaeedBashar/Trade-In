@@ -5,7 +5,7 @@ const {
      getCart, getCheckout, 
      getProduct, postCart,
      postDeleteCartItem, 
-     getOrders, postOrders, getInvoice} = require('../controllers/shop');
+     getOrders, postOrders, getInvoice, makePayment} = require('../controllers/shop');
 const { isAuthenticated } = require('../middleware/auth');
 
 
@@ -21,5 +21,5 @@ router.get('/order', isAuthenticated, getOrders)
 router.post('/order', isAuthenticated, postOrders)
 router.get('/order/:id', isAuthenticated, getInvoice)
 router.get('/checkout', isAuthenticated, getCheckout)
-
+// router.get('/paystack', isAuthenticated, makePayment)
 module.exports = router

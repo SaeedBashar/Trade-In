@@ -6,7 +6,7 @@ const { isAuthenticated } = require('../middleware/auth');
 const { 
     getAddProduct, postAddProduct, 
     getProducts, getEditProduct,
-    postEditProduct, postDeleteProduct 
+    postEditProduct, deleteProduct 
 } = require('../controllers/admin')
 
 router.get('/add-product', isAuthenticated, getAddProduct)
@@ -19,6 +19,6 @@ router.get('/edit-product/:id', isAuthenticated, getEditProduct)
 
 router.post('/edit-product', isAuthenticated, postEditProduct)
 
-router.post('/delete-product', isAuthenticated, postDeleteProduct)
+router.delete('/delete/:id', isAuthenticated, deleteProduct)
 
 module.exports = router

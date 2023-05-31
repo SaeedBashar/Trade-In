@@ -3,6 +3,7 @@ const Product = require('../models/product');
 const { validationResult } = require('express-validator')
 const path = require('path')
 const fileUtil = require('../utils/file')
+const rootDir = require('../utils/utils')
 
 exports.getAddProduct = (req, res, next)=>{
     res.render('admin/edit-product', {
@@ -101,16 +102,17 @@ exports.getProducts = async (req, res, next)=>{
     }
 }
 
-exports.postDeleteProduct = async (req, res, next)=>{
+exports.deleteProduct = async (req, res, next)=>{
     try{
-        const pid = req.body.productId;
+        const pid = req.params.id;
         const product = await Product.findById(pid)
-        if(image){
-            fileUtil.deleteFile(product.imageUrl)
+        if(product){
+            fileUtil.deleteFile(path.join(rootDir, 'images', product.imageUrl))
         }
         await Product.deleteOne({_id: pid, userId: req.user._id})
+        return res.status(200).json({msg: 'Product Deleted Successfully'})
     }catch(err){
         console.log(err)
+        return res.status(500).json({msg: 'Error Deleting Product'})
     }
-    res.redirect('/admin/products')
 }
