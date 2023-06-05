@@ -2,10 +2,12 @@
 
     <div class="d-flex align-items-center justify-content-between">
       <a href="#" class="logo d-flex align-items-center">
-        <img src="/img/logo.png" alt="">
+        <img src="/img/icon.png" alt="">
         <span class="d-none d-lg-block">Trade In</span>
       </a>
       <i class="bi bi-list toggle-sidebar-btn"></i>
     </div>
-
+    <% if(isAuthenticated) {%>
+      <%- include('nav-profile') %>
+    <% } %>
 </header>

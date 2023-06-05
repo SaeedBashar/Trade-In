@@ -75,3 +75,9 @@ exports.postSignOut = (req, res, next)=>{
         res.redirect('/')
     })
 }
+
+exports.getProfile = (req, res, next)=>{
+    res.render('profile', {
+        pageTitle: "Page | User Profile"
+    })
+}

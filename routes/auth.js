@@ -3,7 +3,8 @@ const { check, body } = require('express-validator')
 const { 
     getSignIn, postSignIn,
     getSignUp, postSignUp, 
-    postSignOut } = require('../controllers/auth')
+    postSignOut, getProfile } = require('../controllers/auth')
+    const { isAuthenticated } = require('../middleware/auth');
 
 const router = express.Router()
 
@@ -23,5 +24,7 @@ router.get('/sign-up', getSignUp)
 router.post('/sign-up', postSignUp)
 
 router.post('/sign-out', postSignOut)
+
+router.get('/user-profile', isAuthenticated, getProfile)
 
 module.exports = router

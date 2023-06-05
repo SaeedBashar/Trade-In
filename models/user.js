@@ -16,6 +16,7 @@ const UserSchema = new Schema({
         type: String,
         required: true
     },
+    txReference: String,
     cart: {
         products: [
             {

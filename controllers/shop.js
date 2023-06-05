@@ -5,15 +5,16 @@ const pdfDocument = require('pdfkit');
 const Product = require('../models/product');
 const Order = require('../models/order');
 const { verifyPayment } = require('../utils/file');
+const User = require('../models/user')
 
 exports.getProducts = async (req, res, next)=>{
+    console.log(req.user)
     try{
         const products = await Product.find()
         // let userProducts = products.filter(p=>p.userId === req.user.id)
         res.render('shop/index', {
             products: products,
-            pageTitle: 'Page | Shop',
-            
+            pageTitle: 'Page | Shop'
         })
     }catch(err){
         console.log(err)
@@ -118,17 +119,24 @@ exports.getOrders = async (req, res, next)=>{
 
 exports.postOrders = async(req, res, next)=>{
     try{
-        const user = await req.user.populate("cart.products.productId")
-        const order = await new Order({
-            user: user,
-            products: [...user.cart.products.map(p=>({product: {...p.productId}, qty: p.qty}))]
-        })
-        await order.save()
-        req.user.clearCart()
+        const txRef = req.query.reference;
+        console.log('no', req.user)
+        console.log('yes', txRef)
+        if(req.user.txReference === txRef){
+            console.log('req.user')
+            const user = await req.user.populate("cart.products.productId")
+            const order = await new Order({
+                user: user,
+                products: [...user.cart.products.map(p=>({product: {...p.productId}, qty: p.qty}))]
+            })
+            await order.save()
+            req.user.clearCart()
+            return res.redirect('/orders')
+        }
     }catch(err){
         console.log(err)
     }
-    res.redirect('/order')
+    res.redirect('/')
 
     // Cart.getCart(cart=>{
     //     let id = Date.now() + parseInt(Math.random() * 100)
@@ -213,14 +221,14 @@ exports.getCheckout = async(req,res, next)=>{
 
     const params = JSON.stringify({
     "email": req.user.email,
-    "amount": totalPrice * 100
+    "amount": totalPrice * 100,
+    "callback_url": 'http://localhost:4000/order',
     })
 
     const options = {
     hostname: 'api.paystack.co',
     port: 443,
     path: '/transaction/initialize',
-    callback_url: 'http://localhost:4000/order',
     method: 'POST',
     headers: {
         Authorization: 'Bearer ' + process.env.PAYSTACK_SECRET_KEY,
@@ -235,16 +243,24 @@ exports.getCheckout = async(req,res, next)=>{
         data += chunk
     });
 
-    resps.on('end', () => {
+    resps.on('end', async () => {
         const resData = JSON.parse(data)
-        res.redirect(resData.data.authorization_url)
+        console.log(resData)
+        if(resData.status){
+            const user = await User.findById(req.user._id);
+            user.txReference = resData.data.reference;
+            await user.save();
+            return res.redirect(resData.data.authorization_url)
+        }
+        return res.redirect('/orders')
         // res.send(data)
-        console.log()
     })
     }).on('error', error => {
-    console.error(error)
+        console.error(error)
+        return res.redirect('/orders')
     })
 
     reqps.write(params)
     reqps.end()
 }
+

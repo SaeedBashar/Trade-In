@@ -71,6 +71,7 @@ app.use(async(req, res, next)=>{
 app.use((req, res, next)=>{
     res.locals.isAuthenticated = req.session.isLoggedIn;
     res.locals.csrfToken = req.csrfToken()
+    res.locals.user = req.user ? {name: req.user.name, email: req.user.email}: null
     next()
 })
 
