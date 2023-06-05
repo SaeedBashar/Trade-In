@@ -24,7 +24,6 @@ exports.postAddProduct = async (req, res,next)=>{
         let userId = req.user
 
         if(!image) {
-            console.log('error here')
             throw new Error("Invalid Image value")
         }
 

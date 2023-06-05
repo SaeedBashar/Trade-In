@@ -8,7 +8,6 @@ const { verifyPayment } = require('../utils/file');
 const User = require('../models/user')
 
 exports.getProducts = async (req, res, next)=>{
-    console.log(req.user)
     try{
         const products = await Product.find()
         // let userProducts = products.filter(p=>p.userId === req.user.id)
@@ -38,7 +37,6 @@ exports.getProduct = async(req, res, next)=>{
 }
 
 exports.getIndex = async (req, res, next)=>{
-    console.log(req.user)
     try{
         const products = await Product.find()
         // let userProducts = products.filter(p=>p.userId === req.user.id)
@@ -120,10 +118,8 @@ exports.getOrders = async (req, res, next)=>{
 exports.postOrders = async(req, res, next)=>{
     try{
         const txRef = req.query.reference;
-        console.log('no', req.user)
-        console.log('yes', txRef)
+    
         if(req.user.txReference === txRef){
-            console.log('req.user')
             const user = await req.user.populate("cart.products.productId")
             const order = await new Order({
                 user: user,
@@ -245,7 +241,6 @@ exports.getCheckout = async(req,res, next)=>{
 
     resps.on('end', async () => {
         const resData = JSON.parse(data)
-        console.log(resData)
         if(resData.status){
             const user = await User.findById(req.user._id);
             user.txReference = resData.data.reference;

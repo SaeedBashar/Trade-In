@@ -11,7 +11,6 @@ exports.getSignIn = (req, res, next)=>{
 exports.postSignIn = async (req, res, next)=>{
 
     const vResults = validationResult(req)
-    console.log(vResults)
     if(vResults.errors.length > 0){
         return res.render('auth/signin', {
             pageTitle: "Page | Sign In",
@@ -60,7 +59,6 @@ exports.postSignUp = async (req, res, next)=>{
             name, email, 
             password: hashedPassword, cart : { products: []}
         })
-        console.log(user)
         await user.save()
         res.redirect('/sign-in')
     }catch(err){

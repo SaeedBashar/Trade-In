@@ -1,0 +1,23 @@
+
+.products-img {
+    display: block;
+    width: 100%;
+}
+
+.cart-img {
+    max-width: 60px;
+}
+
+.cart td, th {
+    vertical-align: middle;
+}
+
+.c-alert {
+    font-size: 13px;
+    padding: 2px;
+    text-align: center;
+}
+
+.order-pdf {
+    text-align: right;
+}

@@ -82,20 +82,6 @@ app.use(errorRoute)
 
 mongoose.connect(process.env.MONGO_URI)
 .then(async (response)=>{
-
-    // const users = await User.find()
-    // await User.findByIdAndRemove(users[0]._id)
-    // let user;
-    // if(users.length == 0 ){
-    //     user = await new User({
-    //         name: "John Smith",
-    //         email: "smith@gmail.com",
-    //         cart: {
-    //             products: []
-    //         }
-    //     })
-    //     user.save()
-    // }
     console.log("[CONNECTED] Connection Setup Successfully.")
     app.listen(4000)
 })
